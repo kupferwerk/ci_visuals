@@ -41,7 +41,7 @@ def handle_frame(frame):
             green = colorValue
         else:
             blue = colorValue
-            LED_STRIP.setPixelColor(stripIndex, red, green, blue)
+            LED_STRIP.setPixelColorRGB(stripIndex, red, green, blue)
     LED_STRIP.show()
 
 def set_colors(socket_data):
