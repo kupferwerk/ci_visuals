@@ -19,12 +19,15 @@ LED_FREQ_HZ    = 800000  # LED signal frequency in hertz (usually 800khz)
 LED_DMA        = 5       # DMA channel to use for generating signal (try 5)
 LED_BRIGHTNESS = 100     # Set to 0 for darkest and 255 for brightest
 LED_INVERT     = False   # True to invert the signal (when using NPN transistor level shift)
+# Create NeoPixel object with appropriate configuration.
+LED_STRIP = np.Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS)
 
 # Buffering: TODO This is not Threadsafe.
 EXPECTED_DATA_LENGTH = 3 * LED_COUNT
 BUFFER = ''
 
 def handle_frame(frame):
+    global LED_STRIP
     red = 0
     green = 0
     blue = 0
@@ -38,8 +41,8 @@ def handle_frame(frame):
             green = colorValue
         else:
             blue = colorValue
-            strip.setPixelColor(stripIndex, red, green, blue)
-    strip.show()
+            LED_STRIP.setPixelColor(stripIndex, red, green, blue)
+    LED_STRIP.show()
 
 def set_colors(socket_data):
     global BUFFER
@@ -55,11 +58,10 @@ def set_colors(socket_data):
         handle_frame(frame)
 
 def start_socket():
-    # Create NeoPixel object with appropriate configuration.
-    strip = np.Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS)
+    global LED_STRIP
     # Intialize the library (must be called once before other functions).
-    strip.begin()
-    
+    LED_STRIP.begin()
+
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     print 'Socket created'
 
