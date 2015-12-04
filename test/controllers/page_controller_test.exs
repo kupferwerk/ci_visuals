@@ -6,8 +6,8 @@ defmodule CiVisuals.PageControllerTest do
     rgb_color = Conversions.hsl_to_rgb color
 
     s = Socket.TCP.connect! "localhost", 8888
-    Enum.each 1..60, fn x ->
-      Socket.Stream.send! s, <<x, rgb_color.r, rgb_color.g, rgb_color.b>>
+    Enum.each 1..60, fn x_ ->
+      Socket.Stream.send! s, <<rgb_color.r, rgb_color.g, rgb_color.b>>
     end
 
   end

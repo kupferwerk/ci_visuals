@@ -9,11 +9,25 @@ from thread import *
 
 HOST = 'localhost'   # Symbolic name meaning all available interfaces
 PORT = 8888 # Arbitrary non-privileged port
+EXPECTED_DATA_LENGTH = 3 * 60
+BUFFER = ''
+
+def handle_frame(frame):
+    for s in frame:
+        print int(s.encode('hex'), 16)
 
 def set_colors(socket_data):
-    print 'Received Data' + str(len(socket_data))
-    for s in socket_data:
-        print int(s.encode('hex'), 16)
+    global BUFFER
+    data_length = len(socket_data)
+    print 'Received Data ' + str(data_length)
+    BUFFER += socket_data
+    print 'Buffer-length ' + str(len(BUFFER))
+    if len(BUFFER) >= EXPECTED_DATA_LENGTH:
+        frame = BUFFER[:EXPECTED_DATA_LENGTH]
+        BUFFER = BUFFER[EXPECTED_DATA_LENGTH:]
+        print 'Frame ' + str(len(frame))
+        print 'Buffer ' + str(len(BUFFER))
+        handle_frame(frame)
 
 def start_socket():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -48,7 +62,7 @@ def start_socket():
        while True:
 
            #Receiving from client
-           data = conn.recv(4096)
+           data = conn.recv(EXPECTED_DATA_LENGTH)
            print data
            if not data:
                break
