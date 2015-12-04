@@ -7,6 +7,7 @@ defmodule CiVisuals do
     import Supervisor.Spec, warn: false
 
     children = [
+      supervisor(CiVisuals.ColorBroadcast.Supervisor, []),
       # Start the endpoint when the application starts
       supervisor(CiVisuals.Endpoint, []),
       # Start the Ecto repository
