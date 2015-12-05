@@ -18,8 +18,7 @@ defmodule CiVisuals.CiFetcher.Jenkins do
   end
 
   def check_maike_project do
-    # url = "http://jenkins.kupferwerk.net:8080/job/AUMSI_unite_crash_monkey/api/json"
-    url = "http://jenkins.kupferwerk.net:8080/job/beacable-android/api/json"
+    url = "http://jenkins.kupferwerk.net:8080/job/hackathon-led-test/api/json"
 
     retrieve(url, Models.Project)
     |> retrieve_build_details
