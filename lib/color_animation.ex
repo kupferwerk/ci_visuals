@@ -1,21 +1,19 @@
 defmodule ColorAnimation do
 
-  def test(total_ticks \\ 100) do
-    initial_color = Colors.HSL.black
-    target_color = Colors.HSL.white
-    delta = delta_per_tick(initial_color, target_color, total_ticks)
+  def blend(initial_color = %HSLColor{}, target_color = %HSLColor{}) do
+    total_ticks = 30
 
+    delta = delta_per_tick(initial_color, target_color, total_ticks)
     Enum.scan(1..total_ticks, initial_color, fn _tick, current_color ->
       delta |> apply_delta(current_color)
     end)
-    |> IO.inspect
   end
 
-  defp delta_per_tick(from = %HSLColor{}, to = %HSLColor{}, total_ticks \\ 100) do
+  defp delta_per_tick(from = %HSLColor{}, to = %HSLColor{}, total_ticks) do
     hsl_delta = %{
-      h: delta(from.h, to.h),
-      s: delta(from.s, to.s),
-      l: delta(from.l, to.l),
+      h: color_delta(from.h, to.h, total_ticks),
+      s: color_delta(from.s, to.s, total_ticks),
+      l: color_delta(from.l, to.l, total_ticks),
     }
   end
 
@@ -27,7 +25,7 @@ defmodule ColorAnimation do
     )
   end
 
-  defp delta(from, to, total_ticks \\ 100) do
-    (to - from) / 100
+  defp color_delta(from, to, total_ticks) do
+    (to - from) / total_ticks
   end
 end

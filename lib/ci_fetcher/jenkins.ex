@@ -1,23 +1,22 @@
 defmodule CiVisuals.CiFetcher.Jenkins do
+  alias CiVisuals.ColorBroadcast.Animator
   import BlockTimer
 
   def start_link do
     HTTPoison.start
     start_fetching_projects
 
-    pid = spawn_link fn -> receive do end end
-
-    {:ok, pid}
+    Agent.start_link(fn -> "" end, name: __MODULE__)
   end
 
   def start_fetching_projects do
-    apply_interval 5 |> seconds do
+    apply_interval 2 |> seconds do
       IO.puts "fetching project data"
-      check_maike_project
+      check_project
     end
   end
 
-  def check_maike_project do
+  def check_project do
     url = "http://jenkins.kupferwerk.net:8080/job/hackathon-led-test/api/json"
 
     retrieve(url, Models.Project)
@@ -36,15 +35,26 @@ defmodule CiVisuals.CiFetcher.Jenkins do
     |> Poison.decode! as: model
   end
 
-  defp report_status(%Models.BuildDetails{result: result}) do
-    color = case result do
-      "FAILURE" -> Colors.RGB.red
-      "SUCCESS" -> Colors.RGB.green
-      _         -> Colors.RGB.yellow  # unknown status
-    end
+  defp report_status(%Models.BuildDetails{result: new_state}) do
+    {changed?, old_state} = has_state_changed new_state
 
-    Process.whereis(:color_service)
-    |> send {:set_same_colors, color}
+    if changed? do
+      IO.puts "status has changed"
+      start_color = color_for_state old_state
+      end_color = color_for_state new_state
+
+      Animator.blend(start_color, end_color)
+
+      Agent.update(__MODULE__, fn old -> new_state end)
+    end
   end
 
+  defp color_for_state("FAILURE"), do: Colors.RGB.red
+  defp color_for_state("SUCCESS"), do: Colors.RGB.green
+  defp color_for_state(_), do: Colors.RGB.yellow
+
+  defp has_state_changed(new_state) do
+    old_state = Agent.get(__MODULE__, fn old -> old end)
+    {new_state != old_state, old_state}
+  end
 end

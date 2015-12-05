@@ -7,7 +7,8 @@ defmodule CiVisuals.ColorBroadcast.Supervisor do
 
   def init(:ok) do
     children = [
-      worker(CiVisuals.ColorBroadcast.Service, [])
+      worker(CiVisuals.ColorBroadcast.Service, []),
+      worker(CiVisuals.ColorBroadcast.Animator, [])
     ]
 
     supervise(children, strategy: :one_for_one)
