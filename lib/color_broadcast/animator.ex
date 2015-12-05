@@ -17,6 +17,15 @@ defmodule CiVisuals.ColorBroadcast.Animator do
     end
   end
 
+  def rotate(color) do
+    pid = Process.whereis(:animator)
+    if pid != nil do
+      send pid, {:animate_rotate, color}
+    else
+      IO.puts "animator not found"
+    end
+  end
+
   defp wait_for_animation_request do
     receive do
       {:animate_blend, start_color, end_color} ->
