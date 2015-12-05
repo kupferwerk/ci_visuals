@@ -37,7 +37,8 @@ defmodule CiVisuals.Mixfile do
      {:phoenix_live_reload, "~> 1.0", only: :dev},
      {:cowboy, "~> 1.0"},
      {:socket, "~> 0.3.1"},
-     {:block_timer, "~> 0.0.1"}]
+     {:block_timer, "~> 0.0.1"},
+     {:httpoison, "~> 0.8.0"}]
   end
 
   # Aliases are shortcut or tasks specific to the current project.

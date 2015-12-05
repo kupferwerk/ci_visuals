@@ -8,6 +8,7 @@ defmodule CiVisuals do
 
     children = [
       supervisor(CiVisuals.ColorBroadcast.Supervisor, []),
+      supervisor(CiVisuals.CiFetcher.Supervisor, []),
       # Start the endpoint when the application starts
       supervisor(CiVisuals.Endpoint, []),
       # Start the Ecto repository

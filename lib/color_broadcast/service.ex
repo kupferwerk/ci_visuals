@@ -11,7 +11,7 @@ defmodule CiVisuals.ColorBroadcast.Service do
     end
     Process.register pid, :color_service
 
-    spawn_scheduler(pid)
+    # spawn_scheduler(pid)
 
     {:ok, pid}
   end
@@ -28,7 +28,7 @@ defmodule CiVisuals.ColorBroadcast.Service do
         send self, {:set_same_colors, Colors.RGB.random}
 
       {:set_same_colors, color = %RGBColor{}} ->
-        IO.inspect(color)
+        # IO.inspect(color)
         send_colors socket, Enum.map(1..60, fn _ -> color end)
 
       {:set_colors, colors = []} ->
