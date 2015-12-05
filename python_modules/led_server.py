@@ -1,7 +1,12 @@
 '''
    Simple socket server using threads
 '''
-import neopixel as np
+try:
+    import neopixel as np
+    MOCK = False
+except ImportError:
+    MOCK = True
+
 import socket
 import sys
 import signal
@@ -12,7 +17,6 @@ HOST = 'localhost'   # Symbolic name meaning all available interfaces
 PORT = 8888 # Arbitrary non-privileged port
 
 # LED Properties
-LED_COUNT = 60
 LED_COUNT      = 60      # Number of LED pixels.
 LED_PIN        = 18      # GPIO pin connected to the pixels (must support PWM!).
 LED_FREQ_HZ    = 800000  # LED signal frequency in hertz (usually 800khz)
@@ -20,7 +24,8 @@ LED_DMA        = 5       # DMA channel to use for generating signal (try 5)
 LED_BRIGHTNESS = 100     # Set to 0 for darkest and 255 for brightest
 LED_INVERT     = False   # True to invert the signal (when using NPN transistor level shift)
 # Create NeoPixel object with appropriate configuration.
-LED_STRIP = np.Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS)
+if not MOCK:
+    LED_STRIP = np.Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS)
 
 # Buffering: TODO This is not Threadsafe.
 EXPECTED_DATA_LENGTH = 3 * LED_COUNT
@@ -55,12 +60,14 @@ def set_colors(socket_data):
         BUFFER = BUFFER[EXPECTED_DATA_LENGTH:]
         print 'Frame ' + str(len(frame))
         print 'Buffer ' + str(len(BUFFER))
-        handle_frame(frame)
+        if not MOCK:
+            handle_frame(frame)
 
 def start_socket():
     global LED_STRIP
     # Intialize the library (must be called once before other functions).
-    LED_STRIP.begin()
+    if not MOCK:
+        LED_STRIP.begin()
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     print 'Socket created'
