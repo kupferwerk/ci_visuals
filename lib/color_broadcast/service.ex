@@ -31,7 +31,7 @@ defmodule CiVisuals.ColorBroadcast.Service do
         # IO.inspect(color)
         send_colors socket, Enum.map(1..60, fn _ -> color end)
 
-      {:set_colors, colors = []} ->
+      {:set_colors, colors} ->
         send_colors socket, colors
     end
 

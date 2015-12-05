@@ -1,12 +1,15 @@
 defmodule ColorAnimation do
 
-  def blend(initial_color = %HSLColor{}, target_color = %HSLColor{}) do
-    total_ticks = 30
-
+  def blend(initial_color = %HSLColor{}, target_color = %HSLColor{}, total_ticks \\ 30) do
     delta = delta_per_tick(initial_color, target_color, total_ticks)
     Enum.scan(1..total_ticks, initial_color, fn _tick, current_color ->
       delta |> apply_delta(current_color)
     end)
+  end
+
+  def rotation_stream(color = %HSLColor{}, length \\ 60) do
+    steps = blend(color, Colors.HSL.black, length)
+    |> Stream.cycle
   end
 
   defp delta_per_tick(from = %HSLColor{}, to = %HSLColor{}, total_ticks) do

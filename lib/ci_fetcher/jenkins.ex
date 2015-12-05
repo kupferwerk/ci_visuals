@@ -43,7 +43,11 @@ defmodule CiVisuals.CiFetcher.Jenkins do
       start_color = color_for_state old_state
       end_color = color_for_state new_state
 
-      Animator.blend(start_color, end_color)
+      case new_state do
+        "SUCCESS" -> Animator.blend(start_color, end_color)
+        "FAILURE" -> Animator.blend(start_color, end_color)
+        _         -> Animator.rotate(end_color)
+      end
 
       Agent.update(__MODULE__, fn old -> new_state end)
     end
